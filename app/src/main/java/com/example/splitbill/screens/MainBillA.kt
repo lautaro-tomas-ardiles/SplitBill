@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -20,6 +20,7 @@ import com.example.splitbill.navegation.AppScreens
 import com.example.splitbill.ui.theme.*
 
 val dataExpense = mutableListOf<DataOfExpenses>()
+var expenses = 0.0
 
 @Composable
 fun MainBillATopBar(navController: NavController){
@@ -130,7 +131,7 @@ fun MainBillABottomBar(navController: NavController){
                 color = DarkTextColor
             )
             Text(
-                text = "$0",
+                text = "$$expenses",
                 fontSize = 18.sp,
                 color = DarkTextColor,
                 modifier = Modifier.padding(start = 50.dp)
@@ -222,4 +223,12 @@ fun TextsOfExpense(elements: DataOfExpenses){
             )
         }
     }
+    var Expenses = 0.0
+    for (element in dataExpense) {
+        if (!element.isTransfer) {
+            Expenses += element.amount
+            expenses = Expenses
+        }
+    }
+
 }
