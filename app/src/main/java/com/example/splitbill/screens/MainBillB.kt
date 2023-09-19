@@ -81,7 +81,7 @@ fun MainBillBTopBar(navController: NavController) {
 
                 Spacer(Modifier.padding(horizontal = 94.dp))
 
-                Column(){
+                Column {
                     Icon(
                         painter = painterResource(R.drawable.group_2),
                         contentDescription = "balances",
@@ -193,9 +193,7 @@ fun TextsMainBillB(){
                     .padding(horizontal = 20.dp, vertical = 4.dp)
             )
         }
-
-        Spacer(modifier = Modifier.padding(73.dp))
-
+            Spacer(modifier = Modifier.padding(73.dp))
         Text(
             "$0",
             fontSize = 20.sp,

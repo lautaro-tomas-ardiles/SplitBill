@@ -20,7 +20,8 @@ import com.example.splitbill.navegation.AppScreens
 import com.example.splitbill.ui.theme.*
 
 val dataExpense = mutableListOf<DataOfExpenses>()
-var expenses = 0.0
+val expensesAndParticipants: MutableList<MutableList<Any?>> = mutableListOf()
+var allExpenses = 0.0
 
 @Composable
 fun MainBillATopBar(navController: NavController){
@@ -131,7 +132,7 @@ fun MainBillABottomBar(navController: NavController){
                 color = DarkTextColor
             )
             Text(
-                text = "$$expenses",
+                text = "$$allExpenses",
                 fontSize = 18.sp,
                 color = DarkTextColor,
                 modifier = Modifier.padding(start = 50.dp)
@@ -152,6 +153,7 @@ fun MainBillA(navController: NavController){
                 MainBillABottomBar(navController)
             }
         ) {
+            allExpenses()
             ExpenseData(dataExpense)
         }
     }
@@ -186,6 +188,17 @@ fun ComponentExpense(elements: DataOfExpenses){
     }
 }
 
+fun allExpenses(){
+    var expenses = 0.0
+    for (element in dataExpense) {
+        if (!element.isTransfer) {
+            expenses += element.amount
+            expensesAndParticipants.add(mutableListOf(element.amount,element.paidBy))
+            allExpenses = expenses
+        }
+    }
+}
+
 @Composable
 fun TextsOfExpense(elements: DataOfExpenses){
     Row{
@@ -195,27 +208,21 @@ fun TextsOfExpense(elements: DataOfExpenses){
                 color = DarkTextColor,
                 style = MaterialTheme.typography.subtitle1
             )
-
-            Spacer(modifier = Modifier.padding(5.dp))
-
+                Spacer(modifier = Modifier.padding(5.dp))
             Text(
                 elements.title,
                 color = DarkTextColor,
                 style = MaterialTheme.typography.subtitle2
             )
         }
-
-        Spacer(modifier = Modifier.padding(horizontal = 50.dp))
-
+            Spacer(modifier = Modifier.padding(horizontal = 50.dp))
         Column {
             Text(
                 "$${elements.amount}",
                 color = DarkTextColor,
                 style = MaterialTheme.typography.subtitle1
             )
-
-            Spacer(modifier = Modifier.padding(5.dp))
-
+                Spacer(modifier = Modifier.padding(5.dp))
             Text(
                 elements.date,
                 color = DarkTextColor,
@@ -223,12 +230,4 @@ fun TextsOfExpense(elements: DataOfExpenses){
             )
         }
     }
-    var Expenses = 0.0
-    for (element in dataExpense) {
-        if (!element.isTransfer) {
-            Expenses += element.amount
-            expenses = Expenses
-        }
-    }
-
 }
