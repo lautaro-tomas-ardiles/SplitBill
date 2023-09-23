@@ -27,7 +27,7 @@ fun MainBillBTopBar(navController: NavController) {
             .drawBehind {
                 drawLine(
                     color = OrangeBorderColor,
-                    start = Offset(550f, size.height),
+                    start = Offset(size.width/2, size.height),
                     end = Offset(size.width, size.height),
                     strokeWidth = 6f,
                     cap = StrokeCap.Round
@@ -119,7 +119,7 @@ fun MainBillBBottomBar(){
                 color = DarkTextColor
             )
             Text(
-                text = "$0",
+                text = "$$allExpenses",
                 fontSize = 18.sp,
                 color = DarkTextColor,
                 modifier = Modifier.padding(start = 50.dp)

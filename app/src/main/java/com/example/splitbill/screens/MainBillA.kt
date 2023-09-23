@@ -23,6 +23,17 @@ val dataExpense = mutableListOf<DataOfExpenses>()
 val expensesAndParticipants: MutableList<MutableList<Any?>> = mutableListOf()
 var allExpenses = 0.0
 
+fun allExpenses(){
+    var expenses = 0.0
+    for (element in dataExpense) {
+        if (!element.isTransfer && element.id == actualIdSelection) {
+            expenses += element.amount
+            expensesAndParticipants.add(mutableListOf(element.amount,element.paidBy))
+            allExpenses = expenses
+        }
+    }
+}
+
 @Composable
 fun MainBillATopBar(navController: NavController){
     TopAppBar (
@@ -47,7 +58,9 @@ fun MainBillATopBar(navController: NavController){
                     contentDescription = "arrow back",
                     tint = DarkTextColor,
                     modifier = Modifier
-                        .clickable { navController.navigate(route = AppScreens.MainPage.route) }
+                        .clickable {
+                            navController.navigate(route = AppScreens.MainPage.route)
+                        }
                         .padding(20.dp)
                         .width(24.dp)
                 )
@@ -82,10 +95,12 @@ fun MainBillATopBar(navController: NavController){
 
                     )
                 }
-
-                Spacer(Modifier.padding(horizontal = 94.dp))
-
-                Column (Modifier.clickable { navController.navigate(route = AppScreens.MainBillB.route)}) {
+                    Spacer(Modifier.padding(horizontal = 94.dp))
+                Column (
+                    Modifier.clickable {
+                        navController.navigate(route = AppScreens.MainBillB.route)
+                    }
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.group_2),
                         contentDescription = "balances",
@@ -93,9 +108,7 @@ fun MainBillATopBar(navController: NavController){
                         modifier = Modifier
                             .padding(start = 10.dp)
                     )
-
-                    Spacer(modifier = Modifier.padding(2.dp))
-
+                        Spacer(modifier = Modifier.padding(2.dp))
                     Text(
                         text = "balances",
                         fontSize = 16.sp,
@@ -109,18 +122,18 @@ fun MainBillATopBar(navController: NavController){
 
 @Composable
 fun MainBillABottomBar(navController: NavController){
-    BottomAppBar(
-        backgroundColor = DarkBackgroundColor
-    ) {
-        Spacer(modifier = Modifier.padding(80.dp))
+    BottomAppBar( backgroundColor = DarkBackgroundColor ) {
 
         Image(
             painter = painterResource(R.drawable.mas),
             contentDescription = "add",
             modifier = Modifier
                 .size(75.dp)
-                .clickable { navController.navigate(route = AppScreens.NewExpensesOrTransfer.route) }
+                .clickable {
+                    navController.navigate(route = AppScreens.NewExpensesOrTransfer.route)
+                }
                 .padding(vertical = 2.dp)
+                //.absoluteOffset {}
         )
 
         Spacer(modifier = Modifier.padding(10.dp))
@@ -163,7 +176,9 @@ fun MainBillA(navController: NavController){
 fun ExpenseData(elements: List<DataOfExpenses>){
     LazyColumn {
         items (elements) { elements ->
-            ComponentExpense(elements)
+            if (elements.id == actualIdSelection) {
+                ComponentExpense(elements)
+            }
         }
     }
 }
@@ -185,17 +200,6 @@ fun ComponentExpense(elements: DataOfExpenses){
         .fillMaxWidth()
     ) {
         TextsOfExpense(elements)
-    }
-}
-
-fun allExpenses(){
-    var expenses = 0.0
-    for (element in dataExpense) {
-        if (!element.isTransfer) {
-            expenses += element.amount
-            expensesAndParticipants.add(mutableListOf(element.amount,element.paidBy))
-            allExpenses = expenses
-        }
     }
 }
 
@@ -228,6 +232,8 @@ fun TextsOfExpense(elements: DataOfExpenses){
                 color = DarkTextColor,
                 style = MaterialTheme.typography.subtitle2
             )
+            Text("${elements.id}")
+
         }
     }
 }

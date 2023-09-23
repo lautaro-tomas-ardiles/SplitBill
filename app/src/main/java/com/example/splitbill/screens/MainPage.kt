@@ -19,8 +19,9 @@ import com.example.splitbill.navegation.AppScreens
 import com.example.splitbill.ui.theme.*
 
 val billData = mutableListOf<DataOfBill>()
-var titleSelection: String = ""
-var participantsSelection: String = ""
+var titleSelection = ""
+var participantsSelection = ""
+var actualIdSelection = 0
 
 @Composable
 fun MainPageTopBar(){
@@ -95,6 +96,7 @@ fun ComponentOfBill(navController: NavController, elements: DataOfBill) {
             navController.navigate(route = AppScreens.MainBillA.route)
             titleSelection = elements.title
             participantsSelection = elements.participants.joinToString(", ")
+            actualIdSelection = elements.id
         }
     ) {
         TextsOfBill(elements)
@@ -104,16 +106,17 @@ fun ComponentOfBill(navController: NavController, elements: DataOfBill) {
 @Composable
 fun TextsOfBill(elements: DataOfBill){
     Column {
-        Text(elements.title,
+        Text(
+            elements.title,
             color = DarkTextColor,
             style = MaterialTheme.typography.subtitle1
         )
-
-        Spacer(modifier = Modifier.padding(5.dp))
-
-        Text(elements.description,
+            Spacer(modifier = Modifier.padding(5.dp))
+        Text(
+            elements.description,
             color = DarkTextColor,
             style = MaterialTheme.typography.subtitle2
         )
+        Text("${elements.id}")
     }
 }

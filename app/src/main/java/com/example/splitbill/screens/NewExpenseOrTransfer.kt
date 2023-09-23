@@ -8,9 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
@@ -56,7 +53,6 @@ fun NewExpensesOrTransferTopBar(navController: NavController){
             modifier = Modifier
                 .clickable {
                     if (!void){
-                        val a = listOf("","")
                         dataExpense.add(
                             DataOfExpenses(
                                 title = titleOfExpenseOrTransfer,
@@ -64,7 +60,7 @@ fun NewExpensesOrTransferTopBar(navController: NavController){
                                 date = dateOfExpenseOrTransfer,
                                 paidBy = paidByOfExpenseOrTransfer,
                                 isTransfer = isTransferOfExpenseOrTransfer,
-                                forWhom = a as MutableList<String>
+                                id = actualIdSelection
                             )
                         )
                     }
@@ -83,7 +79,6 @@ fun NewExpensesOrTransfer(navController: NavController){
         } ) {
         Column {
             TextFieldsOfExpensesOrTransfer()
-            ForWhom()
         }
     }
 }
@@ -189,41 +184,4 @@ fun TextFieldsOfExpensesOrTransfer(){
     void = titleOfExpenseOrTransfer.isBlank() || amountOfExpenseOrTransfer == 0.0
             || dateOfExpenseOrTransfer.isBlank() || paidByOfExpenseOrTransfer.isBlank()
 
-}
-
-@Composable
-fun ForWhom(){
-    Row(Modifier
-        .background(DarkSubBackgroundColor)
-        .fillMaxWidth()
-    ) {
-        Text("For whom",
-            fontSize = 20.sp,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 20.dp)
-        )
-    }
-
-    val textsOfParticipants = participantsSelection.split(",").map { it.trim() }
-
-    for (i in textsOfParticipants) {
-        Row(Modifier
-                .fillMaxWidth()
-                .drawBehind {
-                    drawLine(
-                        color = DarkBorderColor,
-                        start = Offset(0f, size.height),
-                        end = Offset(size.width, size.height),
-                        strokeWidth = 5f,
-                        cap = StrokeCap.Round
-                    )
-                }
-        ) {
-            Text(
-                text = i,
-                fontSize = 20.sp,
-                modifier = Modifier.padding(horizontal = 50.dp, vertical = 5.dp),
-            )
-        }
-    }
 }

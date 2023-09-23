@@ -5,6 +5,6 @@ data class DataOfExpenses(
     val amount: Double,
     val date: String,
     val paidBy: String,
-    val forWhom: MutableList<String>,
-    val isTransfer: Boolean
+    val isTransfer: Boolean,
+    var id: Int
     )
