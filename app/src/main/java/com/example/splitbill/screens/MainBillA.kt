@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -20,7 +21,7 @@ import com.example.splitbill.navegation.AppScreens
 import com.example.splitbill.ui.theme.*
 
 val dataExpense = mutableListOf<DataOfExpenses>()
-val expensesAndParticipants: MutableList<MutableList<Any?>> = mutableListOf()
+val expensesAndWhoPaid: MutableList<MutableList<Any?>> = mutableListOf()
 var allExpenses = 0.0
 
 fun allExpenses(){
@@ -28,7 +29,7 @@ fun allExpenses(){
     for (element in dataExpense) {
         if (!element.isTransfer && element.id == actualIdSelection) {
             expenses += element.amount
-            expensesAndParticipants.add(mutableListOf(element.amount,element.paidBy))
+            expensesAndWhoPaid.add(mutableListOf(element.amount,element.paidBy))
             allExpenses = expenses
         }
     }
@@ -39,7 +40,7 @@ fun MainBillATopBar(navController: NavController){
     TopAppBar (
         backgroundColor = DarkBackgroundColor,
         modifier = Modifier
-            .height(132.dp)
+            .height(140.dp)
             .drawBehind {
                 drawLine(
                     color = OrangeBorderColor,
@@ -49,21 +50,20 @@ fun MainBillATopBar(navController: NavController){
                     cap = StrokeCap.Round
                 )
             }
-
     ) {
         Column {
             Row {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "arrow back",
-                    tint = DarkTextColor,
-                    modifier = Modifier
-                        .clickable {
-                            navController.navigate(route = AppScreens.MainPage.route)
-                        }
-                        .padding(20.dp)
-                        .width(24.dp)
-                )
+                IconButton(
+                    modifier = Modifier.size(70.dp),
+                    onClick = {
+                        navController.navigate(route = AppScreens.MainPage.route)
+                    }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Arrow back",
+                        tint = DarkTextColor
+                    )
+                }
                 Column {
                     Text(
                         text = titleSelection,
@@ -77,44 +77,46 @@ fun MainBillATopBar(navController: NavController){
                     )
                 }
             }
-
-            Row {
-                Column (Modifier.padding(start = 35.dp)){
+            Row{
+                Column (
+                    Modifier.padding(start = 35.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.validando_ticket),
                         contentDescription = "bill",
-                        tint = DarkTextColor,
-                         modifier = Modifier
-                             .padding(start = 10.dp)
+                        tint = DarkTextColor
                     )
-
                     Text(
                         text = "Expenses",
-                        fontSize = 16.sp,
-                        color = DarkTextColor,
-
-                    )
-                }
-                    Spacer(Modifier.padding(horizontal = 94.dp))
-                Column (
-                    Modifier.clickable {
-                        navController.navigate(route = AppScreens.MainBillB.route)
-                    }
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.group_2),
-                        contentDescription = "balances",
-                        tint = DarkTextColor,
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                    )
-                        Spacer(modifier = Modifier.padding(2.dp))
-                    Text(
-                        text = "balances",
                         fontSize = 16.sp,
                         color = DarkTextColor
                     )
                 }
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Column (
+                        Modifier.clickable {
+                            navController.navigate(route = AppScreens.MainBillB.route) }
+                            .padding(end = 35.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.group_2),
+                            contentDescription = "balances",
+                            tint = DarkTextColor
+                        )
+                        Spacer(modifier = Modifier.padding(2.dp))
+                        Text(
+                            text = "balances",
+                            fontSize = 16.sp,
+                            color = DarkTextColor
+                        )
+                    }
+                }
+
             }
         }
     }
@@ -122,35 +124,39 @@ fun MainBillATopBar(navController: NavController){
 
 @Composable
 fun MainBillABottomBar(navController: NavController){
-    BottomAppBar( backgroundColor = DarkBackgroundColor ) {
-
-        Image(
-            painter = painterResource(R.drawable.mas),
-            contentDescription = "add",
-            modifier = Modifier
-                .size(75.dp)
-                .clickable {
-                    navController.navigate(route = AppScreens.NewExpensesOrTransfer.route)
-                }
-                .padding(vertical = 2.dp)
-                //.absoluteOffset {}
-        )
-
-        Spacer(modifier = Modifier.padding(10.dp))
-
-        Column {
-            Text(
-                text = "Total Expenses",
-                fontSize = 18.sp,
-                color = DarkTextColor
-            )
-            Text(
-                text = "$$allExpenses",
-                fontSize = 18.sp,
-                color = DarkTextColor,
-                modifier = Modifier.padding(start = 50.dp)
+    BottomAppBar( backgroundColor = DarkBackgroundColor ){
+        IconButton(
+            modifier = Modifier.size(80.dp),
+            onClick = {
+                navController.navigate(route = AppScreens.NewExpensesOrTransfer.route)
+            }) {
+            Image(
+                painter = painterResource(R.drawable.mas),
+                contentDescription = "add"
             )
         }
+        Column (
+            Modifier
+                .padding(end = 20.dp)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.End
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Total Expenses",
+                    fontSize = 18.sp,
+                    color = DarkTextColor
+                )
+                Text(
+                    text = "$$allExpenses",
+                    fontSize = 18.sp,
+                    color = DarkTextColor
+                )
+            }
+        }
+
     }
 }
 
@@ -166,6 +172,8 @@ fun MainBillA(navController: NavController){
                 MainBillABottomBar(navController)
             }
         ) {
+            val participants = participantsSelection.split(',')//.map { it.trim() }
+            balance(expensesAndWhoPaid, allExpenses, participants)
             allExpenses()
             ExpenseData(dataExpense)
         }
@@ -228,12 +236,10 @@ fun TextsOfExpense(elements: DataOfExpenses){
             )
                 Spacer(modifier = Modifier.padding(5.dp))
             Text(
-                elements.date,
+                elements.paidBy,
                 color = DarkTextColor,
                 style = MaterialTheme.typography.subtitle2
             )
-            Text("${elements.id}")
-
         }
     }
 }

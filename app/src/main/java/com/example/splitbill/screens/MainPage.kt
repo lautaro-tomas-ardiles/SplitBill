@@ -25,32 +25,42 @@ var actualIdSelection = 0
 
 @Composable
 fun MainPageTopBar(){
-    TopAppBar(
-        backgroundColor = DarkBackgroundColor
-    ) {
-        Text(
-            text = "Split of bill",
-            fontSize = 24.sp,
-            color = DarkTextColor,
-            modifier = Modifier
-                .padding(start = 27.dp)
-        )
+    TopAppBar(backgroundColor = DarkBackgroundColor) {
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                text = "Split of bill",
+                fontSize = 24.sp,
+                color = DarkTextColor,
+                modifier = Modifier
+                    .padding(start = 20.dp)
+            )
+        }
     }
 }
 
 @Composable
 fun MainPageBottomBar(navController: NavController){
-    BottomAppBar(
-        backgroundColor = DarkBackgroundColor
-    ) {
-        Image(
-            painter = painterResource(R.drawable.mas),
-            contentDescription = "add",
-            modifier = Modifier
-                .padding(start = 330.dp, top = 2.dp, bottom = 2.dp)
-                .size(87.dp)
-                .clickable { navController.navigate(AppScreens.NewBill.route) }
-        )
+    BottomAppBar( backgroundColor = DarkBackgroundColor ) {
+        Row (
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            IconButton(
+                modifier = Modifier.size(80.dp),
+                onClick = {
+                    navController.navigate(route = AppScreens.NewBill.route)
+                }){
+                Image(
+                    painter = painterResource(R.drawable.mas),
+                    contentDescription = "add",
+                    modifier = Modifier
+                        .padding(bottom = 2.dp)
+                )
+            }
+        }
     }
 }
 
@@ -87,11 +97,11 @@ fun ComponentOfBill(navController: NavController, elements: DataOfBill) {
                 start = Offset(0f, size.height),
                 end = Offset(size.width, size.height),
                 strokeWidth = 6f,
-                cap = StrokeCap.Round
+                cap = StrokeCap.Square
             )
         }
-        .padding(13.dp)
         .fillMaxWidth()
+        .padding(13.dp)
         .clickable {
             navController.navigate(route = AppScreens.MainBillA.route)
             titleSelection = elements.title
@@ -111,12 +121,12 @@ fun TextsOfBill(elements: DataOfBill){
             color = DarkTextColor,
             style = MaterialTheme.typography.subtitle1
         )
-            Spacer(modifier = Modifier.padding(5.dp))
+        Spacer(modifier = Modifier.padding(5.dp))
+
         Text(
             elements.description,
             color = DarkTextColor,
             style = MaterialTheme.typography.subtitle2
         )
-        Text("${elements.id}")
     }
 }

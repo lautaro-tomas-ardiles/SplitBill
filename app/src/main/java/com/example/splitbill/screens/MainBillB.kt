@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -18,16 +19,22 @@ import com.example.splitbill.R
 import com.example.splitbill.navegation.AppScreens
 import com.example.splitbill.ui.theme.*
 
+fun balance(expensesAndWhoPaid: List<List<Any?>>, allExpenses: Double, participants: List<String>){
+    var expensePerPerson = participants.size / allExpenses
+
+
+}
+
 @Composable
 fun MainBillBTopBar(navController: NavController) {
-    TopAppBar(
+    TopAppBar (
         backgroundColor = DarkBackgroundColor,
         modifier = Modifier
-            .height(132.dp)
+            .height(140.dp)
             .drawBehind {
                 drawLine(
                     color = OrangeBorderColor,
-                    start = Offset(size.width/2, size.height),
+                    start = Offset(size.width / 2, size.height),
                     end = Offset(size.width, size.height),
                     strokeWidth = 6f,
                     cap = StrokeCap.Round
@@ -36,15 +43,17 @@ fun MainBillBTopBar(navController: NavController) {
     ) {
         Column {
             Row {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "arrow back",
-                    tint = DarkTextColor,
-                    modifier = Modifier
-                        .clickable {}
-                        .padding(20.dp)
-                        .width(24.dp)
-                )
+                IconButton(
+                    modifier = Modifier.size(70.dp),
+                    onClick = {
+                        navController.navigate(route = AppScreens.MainPage.route)
+                    }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Arrow back",
+                        tint = DarkTextColor
+                    )
+                }
                 Column {
                     Text(
                         text = titleSelection,
@@ -58,48 +67,46 @@ fun MainBillBTopBar(navController: NavController) {
                     )
                 }
             }
-
-            Row {
-                Column(Modifier
-                    .padding(start = 35.dp)
-                    .clickable { navController.navigate(route = AppScreens.MainBillA.route) }
+            Row{
+                Column (
+                    Modifier.clickable {
+                        navController.navigate(route = AppScreens.MainBillA.route) }
+                        .padding(start = 35.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.validando_ticket),
                         contentDescription = "bill",
-                        tint = DarkTextColor,
-                        modifier = Modifier
-                            .padding(start = 10.dp)
+                        tint = DarkTextColor
                     )
-
                     Text(
                         text = "Expenses",
                         fontSize = 16.sp,
                         color = DarkTextColor
                     )
                 }
-
-                Spacer(Modifier.padding(horizontal = 94.dp))
-
-                Column {
-                    Icon(
-                        painter = painterResource(R.drawable.group_2),
-                        contentDescription = "balances",
-                        tint = DarkTextColor,
-                        modifier = Modifier
-                            .padding(start = 10.dp)
-                    )
-
-                    Spacer(modifier = Modifier.padding(2.dp))
-
-                    Text(
-                        text = "balances",
-                        fontSize = 16.sp,
-                        color = DarkTextColor,
-                        modifier = Modifier
-
-                    )
+                Column(
+                    Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Column (
+                        Modifier.padding(end = 35.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.group_2),
+                            contentDescription = "balances",
+                            tint = DarkTextColor
+                        )
+                        Spacer(modifier = Modifier.padding(2.dp))
+                        Text(
+                            text = "balances",
+                            fontSize = 16.sp,
+                            color = DarkTextColor
+                        )
+                    }
                 }
+
             }
         }
     }
@@ -107,23 +114,25 @@ fun MainBillBTopBar(navController: NavController) {
 
 @Composable
 fun MainBillBBottomBar(){
-    BottomAppBar(
-        backgroundColor = DarkBackgroundColor
-    ) {
-        Spacer(modifier = Modifier.padding(65.dp))
-
-        Column {
-            Text(
-                text = "Total Expenses",
-                fontSize = 18.sp,
-                color = DarkTextColor
-            )
-            Text(
-                text = "$$allExpenses",
-                fontSize = 18.sp,
-                color = DarkTextColor,
-                modifier = Modifier.padding(start = 50.dp)
-            )
+    BottomAppBar(backgroundColor = DarkBackgroundColor) {
+        Column (
+            Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Total Expenses",
+                    fontSize = 18.sp,
+                    color = DarkTextColor
+                )
+                Text(
+                    text = "$$allExpenses",
+                    fontSize = 18.sp,
+                    color = DarkTextColor
+                )
+            }
         }
     }
 }
@@ -147,7 +156,11 @@ fun MainBillB(navController: NavController) {
 
 @Composable
 fun ComponentBalance(){
-    Column(Modifier.padding(horizontal = 45.dp, vertical = 35.dp)) {
+    Column(Modifier
+        .padding(vertical = 15.dp)
+        .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Row(Modifier
             .border(
                 width = 1.dp,

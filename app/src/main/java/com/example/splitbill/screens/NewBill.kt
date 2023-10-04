@@ -6,6 +6,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
@@ -22,28 +23,30 @@ private val participantsOfBill = mutableListOf<String>()
 
 @Composable
 fun NewBillTopBar(navController: NavController){
-    TopAppBar (
-        backgroundColor = DarkBackgroundColor
-    ) {
-        Icon(imageVector = Icons.Default.ArrowBack,
-            contentDescription = "Arrow back",
-            tint = DarkTextColor,
-            modifier = Modifier
-                .clickable { navController.navigate(route = AppScreens.MainPage.route) }
-                .padding(10.dp)
-        )
+    TopAppBar (backgroundColor = DarkBackgroundColor) {
+        IconButton(
+            modifier = Modifier.size(70.dp),
+            onClick = {
+                navController.navigate(route = AppScreens.MainPage.route)
+            }){
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Arrow back",
+                tint = DarkTextColor
+            )
+        }
         Text(
             text = "New bill",
             fontSize = 24.sp,
             color = DarkTextColor
         )
-        Spacer(modifier = Modifier.padding(100.dp))
-
-        Icon(imageVector = Icons.Default.Check,
-            contentDescription = "chek",
-            tint = DarkTextColor,
-            modifier = Modifier
-                .clickable {
+        Row (
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            IconButton(
+                modifier = Modifier.size(70.dp),
+                onClick = {
                     if (!isVoid) {
                         billData.add(
                             DataOfBill(
@@ -56,13 +59,16 @@ fun NewBillTopBar(navController: NavController){
                         )
                         idCounter++
                         participantsOfBill.clear()
+                        navController.navigate(route = AppScreens.MainPage.route)
                     }
-                    navController.navigate(route = AppScreens.MainPage.route)
-                }
-
-                .padding(10.dp)
-        )
-
+                }){
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "chek",
+                    tint = DarkTextColor
+                )
+            }
+        }
     }
 }
 
@@ -71,7 +77,8 @@ fun NewBill(navController: NavController){
     Scaffold ( topBar = {
         NewBillTopBar(navController)
     } ) {
-        Column {
+        val scrollState = rememberScrollState()
+        Column( modifier = Modifier.verticalScroll(state = scrollState)) {
             TextFieldsOfBill()
             Participants()
         }
@@ -87,14 +94,18 @@ fun TextFieldsOfBill(){
     var selectedBadge by remember { mutableStateOf(badge[0]) }
     var showDropDownMenu by remember { mutableStateOf(false) }
 
-    Column(Modifier.padding(horizontal = 65.dp, vertical = 23.dp)){
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(vertical = 23.dp)
+            .fillMaxWidth()
+    ){
         OutlinedTextField(
             value = title,
             onValueChange = { title = it } ,
             singleLine = true,
             label = { Text("title") }
         )
-
         Spacer(modifier = Modifier.padding(21.dp))
 
         OutlinedTextField(
@@ -103,28 +114,27 @@ fun TextFieldsOfBill(){
             singleLine = true,
             label = { Text("description") }
         )
-
         Spacer(modifier = Modifier.padding(21.dp))
 
         OutlinedTextField(
             value = selectedBadge ,
             onValueChange = { },
-            label = {},
+            label = { },
             readOnly = true,
             trailingIcon = {
                 IconButton(
                     modifier = Modifier.size(width = 120.dp, height = 25.dp),
                     onClick = { showDropDownMenu = true }
                 ) {
-                    Icon(imageVector = Icons.Default.ArrowDropDown,
+                    Icon(
+                        imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = "arrow down"
                     )
                 }
             }
         )
-
         DropdownMenu(
-            modifier = Modifier.padding(start = 85.dp),
+            offset = DpOffset(200.dp,0.dp),
             expanded = showDropDownMenu,
             onDismissRequest = {showDropDownMenu = false}
         ) {
@@ -139,7 +149,6 @@ fun TextFieldsOfBill(){
         }
     }
 }
-
     isVoid = title.isBlank() && description.isBlank()
     titleOfBill = title
     descriptionOfBill = description
@@ -151,8 +160,8 @@ fun Participants(){
     var participant by remember { mutableStateOf("") }
 
     Row(Modifier
-        .background(DarkSubBackgroundColor)
-        .fillMaxWidth()
+            .background(DarkSubBackgroundColor)
+            .fillMaxWidth()
     ) {
         Text(
             "Participants ( ${participantsOfBill.size} / 50 )",
@@ -161,27 +170,30 @@ fun Participants(){
                 .padding(horizontal = 16.dp, vertical = 20.dp)
         )
     }
-
-    OutlinedTextField(
-        value = participant ,
-        onValueChange = { participant = it },
-        label = { Text("participant") },
-        singleLine = true,
-        modifier = Modifier.padding(horizontal = 64.dp, vertical = 18.dp),
-        trailingIcon = {
-            Button(
-                modifier = Modifier.padding(end = 5.dp),
-                onClick = {
-                    participantsOfBill.add(participant)
-                    participant = ""
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .fillMaxWidth()
+    ) {
+        OutlinedTextField(
+            value = participant,
+            onValueChange = { participant = it },
+            label = { Text("participant") },
+            singleLine = true,
+            modifier = Modifier.padding(horizontal = 64.dp, vertical = 18.dp),
+            trailingIcon = {
+                Button(
+                    modifier = Modifier.padding(end = 5.dp),
+                    onClick = {
+                        participantsOfBill.add(participant)
+                        participant = ""
+                    }
+                ) {
+                    Text("add")
                 }
-            ) {
-                Text("add")
             }
-        }
-    )
-
-    Column (Modifier.padding(horizontal = 66.dp)) {
+        )
         for (x in participantsOfBill){
             Text(
                 text = x,

@@ -7,8 +7,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.*
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
 import com.example.splitbill.data.DataOfExpenses
@@ -18,56 +19,55 @@ import com.example.splitbill.ui.theme.*
 private var titleOfExpenseOrTransfer = ""
 private var void = false
 private var amountOfExpenseOrTransfer = 0.0
-private var dateOfExpenseOrTransfer = ""
 private var paidByOfExpenseOrTransfer = ""
 private var isTransferOfExpenseOrTransfer = false
 
 @Composable
 fun NewExpensesOrTransferTopBar(navController: NavController){
-    TopAppBar(
-        backgroundColor = DarkBackgroundColor
-    ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = "ArrowBack",
-            tint = DarkTextColor,
-            modifier = Modifier
-                .clickable { navController.navigate(route = AppScreens.MainBillA.route) }
-                .padding(10.dp)
-        )
-
+    TopAppBar (backgroundColor = DarkBackgroundColor) {
+        IconButton(
+            modifier = Modifier.size(70.dp),
+            onClick = {
+                navController.navigate(route = AppScreens.MainBillA.route)
+            }){
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Arrow back",
+                tint = DarkTextColor
+            )
+        }
         Text(
-            text = "new expense",
+            text = "New expenses",
             fontSize = 24.sp,
-            color = DarkTextColor,
-            modifier = Modifier
-                .padding(start = 7.dp)
+            color = DarkTextColor
         )
-
-        Spacer(modifier = Modifier.padding(70.dp))
-
-        Icon(
-            imageVector = Icons.Default.Check,
-            contentDescription = "Check",
-            tint = DarkTextColor,
-            modifier = Modifier
-                .clickable {
-                    if (!void){
+        Row (
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.End
+        ) {
+            IconButton(
+                modifier = Modifier.size(70.dp),
+                onClick = {
+                    if (!void) {
                         dataExpense.add(
                             DataOfExpenses(
                                 title = titleOfExpenseOrTransfer,
                                 amount = amountOfExpenseOrTransfer,
-                                date = dateOfExpenseOrTransfer,
                                 paidBy = paidByOfExpenseOrTransfer,
                                 isTransfer = isTransferOfExpenseOrTransfer,
                                 id = actualIdSelection
                             )
                         )
+                            navController.navigate(route = AppScreens.MainBillA.route)
                     }
-                    navController.navigate(route = AppScreens.MainBillA.route)
-                }
-                .padding(10.dp)
-        )
+                }){
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = "chek",
+                    tint = DarkTextColor
+                )
+            }
+        }
     }
 }
 
@@ -77,7 +77,8 @@ fun NewExpensesOrTransfer(navController: NavController){
         topBar = {
             NewExpensesOrTransferTopBar(navController)
         } ) {
-        Column {
+        val scrollState2 = rememberScrollState()
+        Column( modifier = Modifier.verticalScroll(state = scrollState2)) {
             TextFieldsOfExpensesOrTransfer()
         }
     }
@@ -87,21 +88,22 @@ fun NewExpensesOrTransfer(navController: NavController){
 fun TextFieldsOfExpensesOrTransfer(){
     var title by remember { mutableStateOf("") }
     var amount by remember { mutableStateOf("") }
-    var date by remember { mutableStateOf("") }
     var paidBy by remember { mutableStateOf("") }
     var showDropdownMenu by remember { mutableStateOf(false) }
     var isTransfer by remember { mutableStateOf(false) }
 
-    Column(Modifier.padding(horizontal = 65.dp, vertical = 12.dp)) {
-
+    Column(Modifier
+            .padding(vertical = 23.dp)
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
         OutlinedTextField(
             value = title,
             onValueChange = { title = it } ,
             singleLine = true,
             label = { Text("title") }
         )
-
-        Spacer(modifier = Modifier.padding(11.dp))
+        Spacer(modifier = Modifier.padding(21.dp))
 
         OutlinedTextField(
             value = amount,
@@ -112,17 +114,7 @@ fun TextFieldsOfExpensesOrTransfer(){
                 keyboardType = KeyboardType.Number
             )
         )
-
-        Spacer(modifier = Modifier.padding(11.dp))
-
-        OutlinedTextField(
-            value = date,
-            onValueChange = { date = it } ,
-            singleLine = true,
-            label = { Text("date (yyyy/MM/dd)") }
-        )
-
-        Spacer(modifier = Modifier.padding(11.dp))
+        Spacer(modifier = Modifier.padding(21.dp))
 
         OutlinedTextField(
             value = paidBy,
@@ -132,38 +124,33 @@ fun TextFieldsOfExpensesOrTransfer(){
         )
 
         Spacer(modifier = Modifier.padding(10.dp))
-
-        Row (Modifier.padding(start = 83.dp)) {
-            Text(
-                "Expenses or transfer "
-            )
-
+        Text(
+            "Expenses or transfer "
+        )
             Spacer(modifier = Modifier.padding(3.dp))
-
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Dropdown Icon",
-                tint = DarkTextColor,
-                modifier = Modifier
-                    .clickable {
-                        showDropdownMenu = true
-                    }
+        Icon(
+            imageVector = Icons.Default.ArrowDropDown,
+            contentDescription = "Dropdown Icon",
+            tint = DarkTextColor,
+            modifier = Modifier
+                .clickable {
+                    showDropdownMenu = true
+                }
             )
-        }
         DropdownMenu(
             expanded = showDropdownMenu,
-            onDismissRequest = { showDropdownMenu = false }
+            onDismissRequest = { showDropdownMenu = false },
+            offset = DpOffset(100.dp,0.dp)
         ) {
-
             DropdownMenuItem(
                 onClick = {
                     isTransfer = true
                     showDropdownMenu = false
                 }
             ) {
-                Text("transfer")
+                Text(text = "transfer",
+                    textAlign = TextAlign.Center)
             }
-
             DropdownMenuItem(
                 onClick = {
                     isTransfer = false
@@ -172,16 +159,13 @@ fun TextFieldsOfExpensesOrTransfer(){
             ) {
                 Text("Expense")
             }
-
         }
     }
 
     titleOfExpenseOrTransfer = title
     amountOfExpenseOrTransfer = amount.toDoubleOrNull() ?: 0.0
-    dateOfExpenseOrTransfer = date
     paidByOfExpenseOrTransfer = paidBy
     isTransferOfExpenseOrTransfer = isTransfer
-    void = titleOfExpenseOrTransfer.isBlank() || amountOfExpenseOrTransfer == 0.0
-            || dateOfExpenseOrTransfer.isBlank() || paidByOfExpenseOrTransfer.isBlank()
+    void = titleOfExpenseOrTransfer.isBlank() || amountOfExpenseOrTransfer == 0.0 || paidByOfExpenseOrTransfer.isBlank()
 
 }
