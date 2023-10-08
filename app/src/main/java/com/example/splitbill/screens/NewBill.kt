@@ -15,7 +15,7 @@ import com.example.splitbill.navegation.AppScreens
 import com.example.splitbill.ui.theme.*
 
 private var idCounter = 0
-private var isVoid = false
+private var isMatchGeneral = false
 private var titleOfBill = ""
 private var descriptionOfBill = ""
 private var selectedBadgeOfBill = ""
@@ -47,7 +47,7 @@ fun NewBillTopBar(navController: NavController){
             IconButton(
                 modifier = Modifier.size(70.dp),
                 onClick = {
-                    if (!isVoid) {
+                    if (isMatchGeneral) {
                         billData.add(
                             DataOfBill(
                                 title = titleOfBill,
@@ -93,6 +93,8 @@ fun TextFieldsOfBill(){
     var description by remember { mutableStateOf("") }
     var selectedBadge by remember { mutableStateOf(badge[0]) }
     var showDropDownMenu by remember { mutableStateOf(false) }
+    var isMatchT by remember { mutableStateOf(false) }
+    var isMatchD by remember { mutableStateOf(false) }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,22 +102,24 @@ fun TextFieldsOfBill(){
             .padding(vertical = 23.dp)
             .fillMaxWidth()
     ){
+        isMatchT = title.length >= 3
         OutlinedTextField(
             value = title,
             onValueChange = { title = it } ,
             singleLine = true,
-            label = { Text("title") }
+            label = { Text("title (min 3 characters)") },
+            isError = !isMatchT
         )
         Spacer(modifier = Modifier.padding(21.dp))
-
+        isMatchD = description.length >= 5
         OutlinedTextField(
             value = description,
             onValueChange = { description = it } ,
             singleLine = true,
-            label = { Text("description") }
+            label = { Text("description (min 5 characters)") },
+            isError = !isMatchD
         )
         Spacer(modifier = Modifier.padding(21.dp))
-
         OutlinedTextField(
             value = selectedBadge ,
             onValueChange = { },
@@ -149,7 +153,8 @@ fun TextFieldsOfBill(){
         }
     }
 }
-    isVoid = title.isBlank() && description.isBlank()
+    isMatchGeneral = isMatchT && isMatchD && participantsOfBill.isEmpty()
+
     titleOfBill = title
     descriptionOfBill = description
     selectedBadgeOfBill = selectedBadge
@@ -158,11 +163,12 @@ fun TextFieldsOfBill(){
 @Composable
 fun Participants(){
     var participant by remember { mutableStateOf("") }
+    var isEmpty by remember { mutableStateOf(true) }
 
     Row(Modifier
             .background(DarkSubBackgroundColor)
             .fillMaxWidth()
-    ) {
+    ){
         Text(
             "Participants ( ${participantsOfBill.size} / 50 )",
             fontSize = 20.sp,
@@ -170,6 +176,7 @@ fun Participants(){
                 .padding(horizontal = 16.dp, vertical = 20.dp)
         )
     }
+    isEmpty = participantsOfBill.isEmpty()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -182,6 +189,7 @@ fun Participants(){
             label = { Text("participant") },
             singleLine = true,
             modifier = Modifier.padding(horizontal = 64.dp, vertical = 18.dp),
+            isError = isEmpty,
             trailingIcon = {
                 Button(
                     modifier = Modifier.padding(end = 5.dp),

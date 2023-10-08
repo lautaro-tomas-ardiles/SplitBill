@@ -17,7 +17,7 @@ import com.example.splitbill.navegation.AppScreens
 import com.example.splitbill.ui.theme.*
 
 private var titleOfExpenseOrTransfer = ""
-private var void = false
+private var isMatchGeneral = false
 private var amountOfExpenseOrTransfer = 0.0
 private var paidByOfExpenseOrTransfer = ""
 private var isTransferOfExpenseOrTransfer = false
@@ -48,7 +48,7 @@ fun NewExpensesOrTransferTopBar(navController: NavController){
             IconButton(
                 modifier = Modifier.size(70.dp),
                 onClick = {
-                    if (!void) {
+                    if (isMatchGeneral) {
                         expenseData.add(
                             DataOfExpenses(
                                 title = titleOfExpenseOrTransfer,
@@ -91,43 +91,50 @@ fun TextFieldsOfExpensesOrTransfer(){
     var paidBy by remember { mutableStateOf("") }
     var showDropdownMenu by remember { mutableStateOf(false) }
     var isTransfer by remember { mutableStateOf(false) }
+    var isMatchT by remember { mutableStateOf(false) }
+    var isMatchA by remember { mutableStateOf(false) }
+    var isMatchP by remember { mutableStateOf(false) }
 
     Column(Modifier
             .padding(vertical = 23.dp)
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ){
+        isMatchT = title.length >= 3
         OutlinedTextField(
             value = title,
             onValueChange = { title = it } ,
             singleLine = true,
-            label = { Text("title") }
+            label = { Text("title (min 3 characters)") },
+            isError = !isMatchT
         )
         Spacer(modifier = Modifier.padding(21.dp))
-
+        isMatchA = amount != "0.0" && amount != "0" && amount != ""
         OutlinedTextField(
             value = amount,
             onValueChange = { amount = it } ,
             singleLine = true,
-            label = { Text("amount") },
+            label = { Text("amount (greater than 0)") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number
-            )
+            ),
+            isError = !isMatchA
         )
         Spacer(modifier = Modifier.padding(21.dp))
-
+        isMatchP = paidBy in participantsSelection && paidBy != "" && paidBy != " "
         OutlinedTextField(
             value = paidBy,
             onValueChange = { paidBy = it } ,
             singleLine = true,
-            label = { Text("paid by") }
+            label = { Text("paid by") },
+            isError = !isMatchP
         )
 
         Spacer(modifier = Modifier.padding(10.dp))
         Text(
             "Expenses or transfer "
         )
-            Spacer(modifier = Modifier.padding(3.dp))
+        Spacer(modifier = Modifier.padding(3.dp))
         Icon(
             imageVector = Icons.Default.ArrowDropDown,
             contentDescription = "Dropdown Icon",
@@ -136,7 +143,7 @@ fun TextFieldsOfExpensesOrTransfer(){
                 .clickable {
                     showDropdownMenu = true
                 }
-            )
+        )
         DropdownMenu(
             expanded = showDropdownMenu,
             onDismissRequest = { showDropdownMenu = false },
@@ -166,6 +173,6 @@ fun TextFieldsOfExpensesOrTransfer(){
     amountOfExpenseOrTransfer = amount.toDoubleOrNull() ?: 0.0
     paidByOfExpenseOrTransfer = paidBy
     isTransferOfExpenseOrTransfer = isTransfer
-    void = titleOfExpenseOrTransfer.isBlank() || amountOfExpenseOrTransfer == 0.0 || paidByOfExpenseOrTransfer.isBlank()
+    isMatchGeneral = isMatchT && isMatchA && isMatchP
 
 }

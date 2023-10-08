@@ -101,13 +101,13 @@ fun ComponentOfBill(navController: NavController, elements: DataOfBill) {
             )
         }
         .fillMaxWidth()
-        .padding(13.dp)
         .clickable {
             navController.navigate(route = AppScreens.MainBillA.route)
             titleSelection = elements.title
             participantsSelection = elements.participants.joinToString(", ")
             actualIdSelection = elements.id
         }
+        .padding(13.dp)
     ) {
         TextsOfBill(elements)
     }
