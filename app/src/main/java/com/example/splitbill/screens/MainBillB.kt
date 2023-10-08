@@ -2,6 +2,8 @@ package com.example.splitbill.screens
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -16,13 +18,45 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.*
 import androidx.navigation.NavController
 import com.example.splitbill.R
+import com.example.splitbill.data.DataOfBalance
 import com.example.splitbill.navegation.AppScreens
 import com.example.splitbill.ui.theme.*
+import kotlin.math.abs
 
-fun balance(expensesAndWhoPaid: List<List<Any?>>, allExpenses: Double, participants: List<String>){
-    var expensePerPerson = participants.size / allExpenses
+val balanceData = mutableListOf<DataOfBalance>()
 
+fun balance(expensesAndWhoPaid: MutableList<MutableList<Any?>>, allExpenses: Double, participants: List<String>){
+    val expensePerPerson = participants.size.toDouble() / allExpenses
 
+    for (i in expensesAndWhoPaid.indices){
+        if (expensesAndWhoPaid[i][0] is Double){
+
+            val actualValue = expensesAndWhoPaid[i][0] as Double
+            expensesAndWhoPaid[i][0] = actualValue - expensePerPerson
+
+            if ((actualValue - expensePerPerson) < 0){
+                val absValue:Double = abs(actualValue - expensePerPerson)
+                balanceData.add(
+                    DataOfBalance(
+                        amount = absValue,
+                        who = expensesAndWhoPaid[i][1] as String,
+                        isDebt = true,
+                        id = actualIdSelection
+                    )
+                )
+            }
+            if ((actualValue - expensePerPerson) > 0){
+                balanceData.add(
+                    DataOfBalance(
+                        amount = expensesAndWhoPaid[i][0] as Double,
+                        who = expensesAndWhoPaid[i][1] as String,
+                        isDebt = false,
+                        id = actualIdSelection
+                    )
+                )
+            }
+        }
+    }
 }
 
 @Composable
@@ -69,8 +103,10 @@ fun MainBillBTopBar(navController: NavController) {
             }
             Row{
                 Column (
-                    Modifier.clickable {
-                        navController.navigate(route = AppScreens.MainBillA.route) }
+                    Modifier
+                        .clickable {
+                            navController.navigate(route = AppScreens.MainBillA.route)
+                        }
                         .padding(start = 35.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -149,70 +185,59 @@ fun MainBillB(navController: NavController) {
                 MainBillBBottomBar()
             }
         ) {
-            ComponentBalance()
+            BalanceData(balanceData)
         }
     }
 }
 
 @Composable
-fun ComponentBalance(){
-    Column(Modifier
-        .padding(vertical = 15.dp)
-        .fillMaxWidth(),
+fun BalanceData(elements: List<DataOfBalance>){
+    LazyColumn {
+        items (elements) { elements ->
+            if (elements.id == actualIdSelection) {
+                ComponentBalance(elements)
+            }
+        }
+    }
+}
+
+@Composable
+fun ComponentBalance(elements: DataOfBalance){
+    Column(Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(Modifier
-            .border(
-                width = 1.dp,
-                color = DarkBorderColor,
-                shape = RoundedCornerShape(size = 37.dp))
-            .width(300.dp)
-            .height(111.dp)
-            .background(
-                color = DarkSubBackgroundColor,
-                shape = RoundedCornerShape(size = 37.dp)
-            )
+                .border(
+                    width = 1.dp,
+                    color = DarkBorderColor,
+                    shape = RoundedCornerShape(size = 37.dp)
+                )
+                .width(300.dp)
+                .height(111.dp)
+                .background(
+                    color = DarkSubBackgroundColor,
+                    shape = RoundedCornerShape(size = 37.dp)
+                )
         ) {
-            TextsMainBillB()
+            TextsMainBillB(elements)
         }
     }
 }
 
 @Composable
-fun TextsMainBillB(){
-    Row {
-        Column(Modifier.padding(top = 10.dp)) {
-            Text(
-                "Carlos",
-                color = DarkTextColor,
-                fontSize = 17.sp ,
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 4.dp)
-            )
-
-            Text(
-                "owes to",
-                color = DarkTextColor,
-                fontSize = 17.sp ,
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 4.dp)
-            )
-
-            Text(
-                "Juan",
-                color = DarkTextColor,
-                fontSize = 17.sp ,
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 4.dp)
-            )
-        }
-            Spacer(modifier = Modifier.padding(73.dp))
+fun TextsMainBillB(elements: DataOfBalance){
+    if (elements.isDebt){
         Text(
-            "$0",
+            text = "${elements.who} owes ${elements.amount}",
             fontSize = 20.sp,
-            modifier = Modifier
-                .padding(vertical = 40.dp)
+            modifier = Modifier.padding(vertical = 20.dp)
         )
-
+    }
+    if(!elements.isDebt) {
+        Text(
+            text = "${elements.who} owe him ${elements.amount}",
+            fontSize = 20.sp,
+            modifier = Modifier.padding(vertical = 20.dp)
+        )
     }
 }

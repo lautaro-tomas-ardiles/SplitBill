@@ -49,7 +49,7 @@ fun NewExpensesOrTransferTopBar(navController: NavController){
                 modifier = Modifier.size(70.dp),
                 onClick = {
                     if (!void) {
-                        dataExpense.add(
+                        expenseData.add(
                             DataOfExpenses(
                                 title = titleOfExpenseOrTransfer,
                                 amount = amountOfExpenseOrTransfer,

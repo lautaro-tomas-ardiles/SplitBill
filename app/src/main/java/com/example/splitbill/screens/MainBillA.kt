@@ -20,13 +20,13 @@ import com.example.splitbill.data.DataOfExpenses
 import com.example.splitbill.navegation.AppScreens
 import com.example.splitbill.ui.theme.*
 
-val dataExpense = mutableListOf<DataOfExpenses>()
-val expensesAndWhoPaid: MutableList<MutableList<Any?>> = mutableListOf()
+val expenseData = mutableListOf<DataOfExpenses>()
+private val expensesAndWhoPaid: MutableList<MutableList<Any?>> = mutableListOf()
 var allExpenses = 0.0
 
 fun allExpenses(){
     var expenses = 0.0
-    for (element in dataExpense) {
+    for (element in expenseData) {
         if (!element.isTransfer && element.id == actualIdSelection) {
             expenses += element.amount
             expensesAndWhoPaid.add(mutableListOf(element.amount,element.paidBy))
@@ -116,7 +116,6 @@ fun MainBillATopBar(navController: NavController){
                         )
                     }
                 }
-
             }
         }
     }
@@ -175,7 +174,7 @@ fun MainBillA(navController: NavController){
             val participants = participantsSelection.split(',')//.map { it.trim() }
             balance(expensesAndWhoPaid, allExpenses, participants)
             allExpenses()
-            ExpenseData(dataExpense)
+            ExpenseData(expenseData)
         }
     }
 }
