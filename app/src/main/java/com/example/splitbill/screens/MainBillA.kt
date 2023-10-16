@@ -171,14 +171,13 @@ fun MainBillA(navController: NavController){
                 MainBillABottomBar(navController)
             }
         ) {
-            val participants = participantsSelection.split(',')//.map { it.trim() }
+            val participants = participantsSelection.split(',')
             balance(expensesAndWhoPaid, allExpenses, participants)
             allExpenses()
             ExpenseData(expenseData)
         }
     }
 }
-
 @Composable
 fun ExpenseData(elements: List<DataOfExpenses>){
     LazyColumn {

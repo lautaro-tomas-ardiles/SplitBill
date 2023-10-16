@@ -24,9 +24,24 @@ import com.example.splitbill.ui.theme.*
 import kotlin.math.abs
 
 val balanceData = mutableListOf<DataOfBalance>()
+// I found the error with the debugger, it is in the 'expensesAndWhoPaid' list, the same for each set ->
+// of elements entered, another identical element is generated except that the amount is tenths less example:
+// expensesAndWhoPaid =
+// [["1"],[300.0],
+// ["2"],[600.0],
+// ["3"],[90.0]]
+// This is how the list should look if these data are entered as expenses but they remain
+// expensesAndWhoPaid =
+// [["1"],[300.0],
+// ["2"],[600.0],
+// ["3"],[90.0],
+// ["1"],[299.9999967],//example
+// ["2"],[599.9999992],//example
+// ["3"],[89.9999991.0]]//example
+
 
 fun balance(expensesAndWhoPaid: MutableList<MutableList<Any?>>, allExpenses: Double, participants: List<String>){
-    val expensePerPerson = participants.size.toDouble() / allExpenses
+    val expensePerPerson: Double = participants.size / allExpenses
 
     for (i in expensesAndWhoPaid.indices){
         if (expensesAndWhoPaid[i][0] is Double){
